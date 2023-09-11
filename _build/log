@@ -1,9 +1,9 @@
-# dune exec ocamlproblems
+# dune fmt
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /home/can/projects/ocaml-projects/ocamlproblems
 # Auto-detected concurrency: 16
-$ /home/can/.opam/5.0.0/bin/ocamlc.opt -config > /tmp/dune_dde425_output
+$ /home/can/.opam/5.0.0/bin/ocamlc.opt -config > /tmp/dune_9468ed_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -114,3 +114,100 @@ $ /home/can/.opam/5.0.0/bin/ocamlc.opt -config > /tmp/dune_dde425_output
 #      ; windows_unicode = false
 #      }
 #  }
+$ (cd _build/default && /home/can/.opam/5.0.0/bin/ocamlformat --impl test/ocamlproblems.ml) > _build/default/test/.formatted/ocamlproblems.ml
+$ (cd _build/default && /home/can/.opam/5.0.0/bin/ocamlformat --impl bin/main.ml) > _build/default/bin/.formatted/main.ml
+$ /usr/bin/git --no-pager diff --no-index --color=always -u _build/default/bin/main.ml _build/default/bin/.formatted/main.ml
+> diff --git a/_build/default/bin/main.ml b/_build/default/bin/.formatted/main.ml
+> index 8fff9d5..e979d92 100644
+> --- a/_build/default/bin/main.ml
+> +++ b/_build/default/bin/.formatted/main.ml
+> @@ -1,51 +1,44 @@
+> -let rec last list = match list with
+> -| [] -> None
+> -| [x] -> Some x
+> -| _::xy -> last xy
+> -
+> -let rec last_one list = match list with
+> -| [] -> None
+> -| [_] -> last_one []
+> -| [x;y] -> Some(x,y)
+> -|  _::xy -> last_one xy
+> -
+> -let rec at list k = match list with 
+> -| x::xy -> if k = 0 then Some x else at xy (k-1)
+> -| [] -> None
+> -
+> -let length list = 
+> -  let rec counter list k = match list with
+> -  | [] -> k
+> -  | _::xy -> counter xy (k+1)
+> +let rec last list =
+> +  match list with [] -> None | [ x ] -> Some x | _ :: xy -> last xy
+> +
+> +let rec last_one list =
+> +  match list with
+> +  | [] -> None
+> +  | [ _ ] -> last_one []
+> +  | [ x; y ] -> Some (x, y)
+> +  | _ :: xy -> last_one xy
+> +
+> +let rec at list k =
+> +  match list with
+> +  | x :: xy -> if k = 0 then Some x else at xy (k - 1)
+> +  | [] -> None
+> +
+> +let length list =
+> +  let rec counter list k =
+> +    match list with [] -> k | _ :: xy -> counter xy (k + 1)
+>    in
+> -  counter list 0 
+> -
+> -let rec rev list = match list with
+> -| x::xy -> rev xy @ [x]
+> -| [] -> []
+> +  counter list 0
+>  
+> +let rec rev list = match list with x :: xy -> rev xy @ [ x ] | [] -> []
+>  let palindrome list = if rev list == list then true else false
+>  
+> -type 'a node =
+> -    | One of 'a 
+> -    | Many of 'a node list
+> -
+> -let rec flatten list = match list with
+> -| One a::xy -> [a] @ flatten xy
+> -| Many a::xy -> flatten a @ flatten xy  
+> -| [] -> [] 
+> -
+> -let compress liste = 
+> -  let rec aux list acc last = match list,acc with
+> -  | [],_ -> acc
+> -  | x::xy,[] -> aux xy (acc@[x]) x
+> -  |       x::xy,_ -> if x = last then aux xy acc last else aux xy (acc @ [x]) x 
+> -  in  
+> -  aux liste [] ""
+> -
+> +type 'a node = One of 'a | Many of 'a node list
+>  
+> +let rec flatten list =
+> +  match list with
+> +  | One a :: xy -> [ a ] @ flatten xy
+> +  | Many a :: xy -> flatten a @ flatten xy
+> +  | [] -> []
+>  
+> -let () = 
+> -  let _ = last ["a";"b";"c"]
+> +let compress liste =
+> +  let rec aux list acc last =
+> +    match (list, acc) with
+> +    | [], _ -> acc
+> +    | x :: xy, [] -> aux xy (acc @ [ x ]) x
+> +    | x :: xy, _ -> if x = last then aux xy acc last else aux xy (acc @ [ x ]) x
+>    in
+> -  ()  
+> +  aux liste [] ""
+> +
+> +let () =
+> +  let _ = last [ "a"; "b"; "c" ] in
+> +  ()
+[1]
