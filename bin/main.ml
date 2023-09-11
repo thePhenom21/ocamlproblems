@@ -35,6 +35,13 @@ let rec flatten list = match list with
 | Many a::xy -> flatten a @ flatten xy  
 | [] -> [] 
 
+let compress liste = 
+  let rec aux list acc last = match list,acc with
+  | [],_ -> acc
+  | x::xy,[] -> aux xy (acc@[x]) x
+  | x::xy,_ -> if x = last then aux xy acc last else aux xy (acc @ [x]) x 
+  in  
+  aux liste [] ""
 
 
 
